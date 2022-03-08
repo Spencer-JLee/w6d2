@@ -6,11 +6,11 @@ class AttrAccessorObject
       setter = n.to_s + "="
 
       define_method(getter){
-        self.instance_variable_get("@" + n.to_s)
+        self.instance_variable_get("@#{n.to_s}")
       }
       
       define_method(setter){ |arg|
-        self.instance_variable_set("@" + n.to_s, arg)
+        self.instance_variable_set("@#{n.to_s}", arg)
       }
     end
   end

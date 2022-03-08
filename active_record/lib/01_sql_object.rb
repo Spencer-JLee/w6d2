@@ -6,9 +6,21 @@ require 'active_support/inflector'
 class SQLObject
   def self.columns
     # ...
+    @columns ||= DBConnection.execute2(<<-SQL)
+      SELECT
+        *
+      FROM
+        #{self.table_name}
+    SQL
+
+
+    @columns.first.map! {|ele| ele.to_sym}
+
+    @columns.first
   end
 
   def self.finalize!
+    
   end
 
   def self.table_name=(table_name)
@@ -43,6 +55,7 @@ class SQLObject
 
   def attributes
     # ...
+    @attributes ||= Hash.new(0)
   end
 
   def attribute_values
