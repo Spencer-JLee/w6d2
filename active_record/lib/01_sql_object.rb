@@ -60,9 +60,9 @@ class SQLObject
   def initialize(params = {})
     # ...
     params.each do |key, value|
-      columns = self.columns
+      columns = self.class.columns
       raise "unknown attribute '#{key}'" if !columns.include?(key.to_sym)
-      self.send(:setter, key, value)
+      self.class.send(:setter, key.to_sym, value)
     end
   end
 
