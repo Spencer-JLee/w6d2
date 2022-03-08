@@ -20,16 +20,17 @@ class SQLObject
   end
 
   def self.finalize!
-    @columns.each do |column|
-      getter = column.to_s
-      setter = column.to_s + "="
+    columns = self.columns
+    columns.each do |column|
+      getter = column.to_sym
+      setter = ("#{column}=").to_sym
 
       define_method(getter){
-        @attributes[column]
+        self.attributes[column]
       }
       
       define_method(setter){ |arg|
-        @attributes[column] = arg
+        self.attributes[column] = arg
       }
     end
   end
@@ -40,11 +41,7 @@ class SQLObject
   end
 
   def self.table_name
-    if @table_name.nil?
-      self.to_s.downcase.pluralize
-    else 
-      @table_name
-    end
+    @table_name ||= self.to_s.downcase.pluralize
     # ...
   end
 
@@ -62,6 +59,11 @@ class SQLObject
 
   def initialize(params = {})
     # ...
+    params.each do |key, value|
+      columns = self.columns
+      raise "unknown attribute '#{key}'" if !columns.include?(key.to_sym)
+      self.send(:setter, key, value)
+    end
   end
 
   def attributes
