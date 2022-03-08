@@ -20,7 +20,18 @@ class SQLObject
   end
 
   def self.finalize!
-    
+    @columns.each do |column|
+      getter = column.to_s
+      setter = column.to_s + "="
+
+      define_method(getter){
+        @attributes[column]
+      }
+      
+      define_method(setter){ |arg|
+        @attributes[column] = arg
+      }
+    end
   end
 
   def self.table_name=(table_name)
